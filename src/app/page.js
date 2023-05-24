@@ -1,12 +1,37 @@
 'use client'
-import Feedback from "./feedback";
+import { useState } from "react";
+import Notes from "./components/Notes";
 
 export default function Home(){
+  const [count, setCount]= useState(0)
+  const handleClick=()=> setCount(count+1)
+
+  const notes=[
+    {
+      id:1,
+      desc:'hello hello heelooo',
+      important: true
+    },
+    {
+      id:2,
+      desc:'hello hello world',
+      important: false
+    },
+    {
+      id:3,
+      desc:'hello world world',
+      important: false
+    },
+  ]
   return(
     <div>
-      <h1>Home</h1>
+      {/* <h3>Home</h3> */}
       {/* <Counter/> */}
-      <Feedback/>
+      {/* <Feedback/> */}
+      {/* <SimpleCounter count={count} handleClick={handleClick}/>
+      <br/>
+      <SimpleCounter count={count} handleClick={handleClick}/> */}
+      <Notes notes={notes}/>
     </div>
   )
 }
