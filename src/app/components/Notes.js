@@ -5,6 +5,8 @@ export default function Notes(props) {
   const [desc, setDesc] = useState("");
   const [notes, setNotes] = useState(props.notes);
   const [showAll, setShowAll] = useState(true);
+  const [isEdit, setIsEdit] = useState(false);
+  const [targetNote, setTargetNote]= useState()
 
   const handleChange = (event) => {
     setDesc(event.target.value);
@@ -27,6 +29,23 @@ export default function Notes(props) {
     }
   };
 
+  const handleEdit=(id)=>{
+    const noteToUpdate = notes.find(n=>n.id === id)
+    setDesc(
+      noteToUpdate.desc
+    )
+    setTargetNote(noteToUpdate)
+    setIsEdit(true)
+}
+
+ const handleSave=(event)=>{
+  event.preventDefault()
+  setNotes(notes.map(n=> n.id === targetNote.id ? {...targetNote,desc:desc} : n))
+
+  setDesc("")
+  setIsEdit(true)
+ }
+
   const handleToggle = () => {
     setShowAll(!showAll);
   };
@@ -44,13 +63,23 @@ export default function Notes(props) {
           <li key={note.id}>
             {note.desc}
             <button onClick={() => handleDelete(note.id)}>Delete</button>
+            <button onClick={() => handleEdit(note.id)}>Edit</button>
           </li>
         ))}
       </ul>
-      <form onSubmit={handleSubmit}>
-        <input type="text" value={desc} onChange={handleChange} />
-        <button type="submit">Submit</button>
-      </form>
+      <form>
+                <input
+                    type="text"
+                    value={desc}
+                    onChange={handleChange} />
+                {' '}
+                {
+                    isEdit
+                        ? <button onClick={handleSave}>save</button>
+                        : <button onClick={handleSubmit}>add</button>
+                }
+
+            </form>
     </div>
   );
 }
