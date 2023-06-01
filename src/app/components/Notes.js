@@ -1,12 +1,23 @@
    {/* // add toggle value that shows in default all and and if clicked show important show only important = true values */}
-   import { useState } from "react";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
-export default function Notes(props) {
+export default function Notes() {
   const [desc, setDesc] = useState("");
-  const [notes, setNotes] = useState(props.notes);
+  const [notes, setNotes] = useState([]);
   const [showAll, setShowAll] = useState(true);
   const [isEdit, setIsEdit] = useState(false);
   const [targetNote, setTargetNote]= useState()
+
+  const baseUrl ="http://localhost:4000/notes"
+
+  useEffect(()=>{
+    axios.get(baseUrl)
+      .then(response=>{
+        console.log(response)
+        setNotes(response.data)
+      })
+  }, [])
 
   const handleChange = (event) => {
     setDesc(event.target.value);
@@ -15,17 +26,37 @@ export default function Notes(props) {
   const handleSubmit = (event) => {
     event.preventDefault();
     const newNote = {
-      id: notes.length + 1,
       desc: desc,
       important: Math.random() < 0.5
     };
-    setNotes([...notes, newNote]);
+    axios.post(baseUrl,newNote)
+      .then(response=>{
+        console.log(response.data)
+        setNotes(notes.concat(response.data))
+      })
+    // setNotes([...notes, newNote]);
+    // setNotes(notes.concat(newNote))
     setDesc("");
+
+    
   };
+
+  // const handleSubmit=(event)=>{
+  //   useEffect(()=>{
+  //     axios.post('http://localhost:4000/notes', {
+        
+  //     })
+  //   })
+
+  // }
 
   const handleDelete = (id) => {
     if (window.confirm(`Are you sure you want to delete note ${id}?`)) {
-      setNotes(notes.filter((note) => note.id !== id));
+      axios.delete(
+        `${baseUrl}/${id}`
+      ).then(response=>{
+        setNotes(notes.filter((note) => note.id !== id));
+      })
     }
   };
 
@@ -40,7 +71,11 @@ export default function Notes(props) {
 
  const handleSave=(event)=>{
   event.preventDefault()
-  setNotes(notes.map(n=> n.id === targetNote.id ? {...targetNote,desc:desc} : n))
+  axios.put( `${baseUrl}/${targetNote.id}`, {...targetNote, desc:desc})
+    .then(response=>{
+      setNotes(notes.map(n=> n.id === targetNote.id ? response.data : n))
+    })
+  // setNotes(notes.map(n=> n.id === targetNote.id ? {...targetNote,desc:desc} : n))
 
   setDesc("")
   setIsEdit(true)
