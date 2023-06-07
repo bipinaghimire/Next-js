@@ -1,120 +1,134 @@
-   {/* // add toggle value that shows in default all and and if clicked show important show only important = true values */}
+{
+  /* // add toggle value that shows in default all and and if clicked show important show only important = true values */
+}
 import axios from "axios";
 import { useEffect, useState } from "react";
+import AddNote from "./AddNote";
 
-export default function Notes() {
-  const [desc, setDesc] = useState("");
+const Notes = () => {
   const [notes, setNotes] = useState([]);
   const [showAll, setShowAll] = useState(true);
-  const [isEdit, setIsEdit] = useState(false);
-  const [targetNote, setTargetNote]= useState()
 
-  const baseUrl ="http://localhost:4000/notes"
+  const baseUrl = "http://localhost:4000/notes";
 
-  useEffect(()=>{
-    axios.get(baseUrl)
-      .then(response=>{
-        console.log(response)
-        setNotes(response.data)
-      })
-  }, [])
+  useEffect(() => {
+    axios.get(baseUrl).then((response) => {
+      setNotes(response.data);
+    });
+  }, []);
 
-  const handleChange = (event) => {
-    setDesc(event.target.value);
+  const handleEdit = (id) => {
+    const noteToUpdate = notes.find((n) => n.id === id);
+    setDesc(noteToUpdate.desc);
+    setTargetNote(noteToUpdate);
+    setIsEdit(true);
   };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const newNote = {
-      desc: desc,
-      important: Math.random() < 0.5
-    };
-    axios.post(baseUrl,newNote)
-      .then(response=>{
-        console.log(response.data)
-        setNotes(notes.concat(response.data))
-      })
-    // setNotes([...notes, newNote]);
-    // setNotes(notes.concat(newNote))
-    setDesc("");
-
-    
-  };
-
-  // const handleSubmit=(event)=>{
-  //   useEffect(()=>{
-  //     axios.post('http://localhost:4000/notes', {
-        
-  //     })
-  //   })
-
-  // }
 
   const handleDelete = (id) => {
     if (window.confirm(`Are you sure you want to delete note ${id}?`)) {
-      axios.delete(
-        `${baseUrl}/${id}`
-      ).then(response=>{
+      axios.delete(`${baseUrl}/${id}`).then((response) => {
         setNotes(notes.filter((note) => note.id !== id));
-      })
+      });
     }
   };
-
-  const handleEdit=(id)=>{
-    const noteToUpdate = notes.find(n=>n.id === id)
-    setDesc(
-      noteToUpdate.desc
-    )
-    setTargetNote(noteToUpdate)
-    setIsEdit(true)
-}
-
- const handleSave=(event)=>{
-  event.preventDefault()
-  axios.put( `${baseUrl}/${targetNote.id}`, {...targetNote, desc:desc})
-    .then(response=>{
-      setNotes(notes.map(n=> n.id === targetNote.id ? response.data : n))
-    })
-  // setNotes(notes.map(n=> n.id === targetNote.id ? {...targetNote,desc:desc} : n))
-
-  setDesc("")
-  setIsEdit(true)
- }
 
   const handleToggle = () => {
     setShowAll(!showAll);
   };
 
-  const filteredNotes = showAll ? notes : notes.filter((note) => note.important);
+  const filteredNotes = showAll
+    ? notes
+    : notes.filter((note) => note.important);
+
+  const h2_Style = {
+    fontSze: 20,
+    color: "red",
+    fontStyle: "italic",
+  };
 
   return (
     <div>
-      <h1>Notes</h1>
-      <button onClick={handleToggle}>
-        {showAll ? "Show Important" : "Show All"}
-      </button>
-      <ul>
-        {filteredNotes.map((note) => (
-          <li key={note.id}>
-            {note.desc}
-            <button onClick={() => handleDelete(note.id)}>Delete</button>
-            <button onClick={() => handleEdit(note.id)}>Edit</button>
-          </li>
-        ))}
-      </ul>
-      <form>
-                <input
-                    type="text"
-                    value={desc}
-                    onChange={handleChange} />
-                {' '}
-                {
-                    isEdit
-                        ? <button onClick={handleSave}>save</button>
-                        : <button onClick={handleSubmit}>add</button>
-                }
+      <div className="nav">
+        {" "}
+        <h1>Simple Todo App</h1>
+      </div>
+      <div className="nav-add">
+        <AddNote notes={notes} setNotes={setNotes} />
+        <button onClick={handleToggle} className="button">
+          {showAll ? "Show Important" : "Show All"}
+        </button>
+      </div>
 
-            </form>
+      {/* <h2 style={h2_Style}> its a beautiful day</h2> */}
+
+      <table className="table">
+        <thead>
+          <tr >
+            <th>Task</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredNotes.map((note) => (
+            <tr key={note.id}>
+              <td>{note.desc}</td>
+              <td>
+                <button onClick={() => handleDelete(note.id)}>Delete</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {/* 
+         <FormNote 
+           notes={filteredNotes}
+           handleDelete={handleDelete}
+            // handleEdit={handleEdit}
+         
+         /> */}
+      {/* <AddNote notes={notes} setNotes={setNotes} /> */}
     </div>
   );
-}
+};
+
+export default Notes;
+
+//  export default function NotesView({
+//   filtered,
+//   toggle,
+//   setToggle,
+//   handleDelete,
+//   onEdit,
+// }) {
+//   return (
+//     <div>
+//       <br />
+//       <button onClick={() => setToggle(!toggle)}>
+//         {" "}
+//         {toggle ? "Show All" : "Show Important"}
+//       </button>
+//       <h1>Notes</h1>
+//       <hr />
+//       <br />
+//       <ul>
+//         {filtered.map((note) => (
+//           <li key={note.id} className="note">
+//             <h2 style={h2_style}>{note.title}</h2>
+//             <p>{note.content}</p>
+//             <p>{note.important ? "Important" : "Not Important"}</p>
+//             <br />
+//             <button onClick={() => handleDelete(note.id)}>Delete</button>{" "}
+//             <button onClick={() => onEdit(note)}>Edit</button>
+//             <br />
+//           </li>
+//         ))}
+//       </ul>
+//     </div>
+//   );
+// }
+
+// const h2_style = {
+//   color: "red",
+//   fontSize: 25,
+//   fontWeight: "bold",
+// };

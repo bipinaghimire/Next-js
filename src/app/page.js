@@ -1,6 +1,6 @@
 'use client'
 import { useState } from "react";
-import PhoneBook from "./components/PhoneBook";
+import Notes from "./components/Notes";
 
 export default function Home(){
   const [count, setCount]= useState(0)
@@ -48,9 +48,9 @@ export default function Home(){
       {/* <SimpleCounter count={count} handleClick={handleClick}/>
       <br/>
       <SimpleCounter count={count} handleClick={handleClick}/> */}
-      {/* <Notes /> */}
+      <Notes />
       {/* <PhoneBook details={details}/> */}
-      <PhoneBook/>
+      {/* <PhoneBook/> */}
     </div>
   )
 }
