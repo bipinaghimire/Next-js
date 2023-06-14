@@ -1,8 +1,11 @@
-import NoteContext from "./NoteContext";
+import { useSelector } from 'react-redux';
+
 
 // export default function NoteList({notes,filter}) {
     export default function NoteList() {
-    const {state:{notes,filter}} = useContext(NoteContext);
+    // const {state:{notes,filter}} = useContext(NoteContext);
+    const notes = useSelector(state=> state.notes)
+    const filter = useSelector(state=> state.filter)
   return (
     <div>
       <ul>

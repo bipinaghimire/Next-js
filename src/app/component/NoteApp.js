@@ -1,40 +1,21 @@
 "use client";
-import { useEffect, useReducer } from "react";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import noteService from "../services/noteService";
-import NoteContext from "./NoteContext";
+import AddNote from "./AddNote";
 import NoteFilter from "./NoteFilter";
 import NoteList from "./NoteList";
 
-const noteReducer= (state, action)=>{
-    switch (action.type) {
-        case "SET_NOTES":
-            //...satete=> spread operator==> puranai content lai copy garxa naya object ma
-        return {
-            ...state,
-            notes: action.payload,
-        };
-        case "SET_DESC":
-            return{
-                ...state,
-                desc:action.payload
-            }
-        case "SET_FILTER":
-            return{
-                ...state,
-                filter:action.payload
-            }
-        
-        default:
-            throw new Error('action not defined')
-    }
-}
 
 export default function NoteApp() {
-    const [state,dispatch ] = useReducer(noteReducer, {
-        notes: [],
-        desc: "",
-        filter: "",
-    })
+  const dispatch = useDispatch()
+  // const state = useSelector(state => state.notes)
+  //commented to use redux bata aako store
+    // const [state,dispatch ] = useReducer(noteReducer, {
+    //     notes: [],
+    //     desc: "",
+    //     filter: "",
+    // })
     //commented for using reducers
 //   const [notes, setNotes] = useState([]);
 //   const [desc, setDesc] = useState("");
@@ -47,24 +28,12 @@ export default function NoteApp() {
     }));
   }, []);
 
-  const handleAdd = (evt) => {
-    evt.preventDefault();
-    if (desc.trim() !== "") {
-      const newNote = {
-        desc: desc,
-        important: Math.random() < 0.5,
-      };
-
-      noteService
-        .createNote(newNote)
-        .then((data) => setNotes(notes.concat(data)));
-      setDesc("");
-    }
-  };
-
+  
   return (
     <div>
-    <NoteContext.Provider 
+      {/* //commented to use reducer */}
+
+    {/* <NoteContext.Provider 
     value={{
         // notes,
         // setNotes,
@@ -76,7 +45,7 @@ export default function NoteApp() {
         state,
         dispatch
     }}
-    >
+    > */}
       {/* <NoteFilter filter={filter} setFilter={setFilter} /> */}
       
       <NoteFilter/>
@@ -85,8 +54,12 @@ export default function NoteApp() {
       <NoteList />
 
       {/* <AddNote desc={desc} setDesc={setDesc} handleAdd={handleAdd} /> */}
+      <AddNote/>
 
-    </NoteContext.Provider>
+    {/* </NoteContext.Provider> */}
     </div>
   );
 }
+
+
+
