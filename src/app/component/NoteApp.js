@@ -23,8 +23,6 @@ const noteReducer= (state, action)=>{
                 ...state,
                 filter:action.payload
             }
-        // case "ADD_NOTE":
-        // return [...state, action.payload];
         
         default:
             throw new Error('action not defined')
